@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 // TODO:
 //------------------------------------------------------------------------------
-var __USELOCALHOST__ = true;
+var __USELOCALHOST__ = false;
 
 const app = function () {
 	const page = {};
@@ -23,57 +23,102 @@ const app = function () {
     page.notice.setNotice('loading...', true);
     
     renderPage();
+    
+    await loadUserSettings();
+    __USELOCALHOST__ = userSettings.uselocal;
+    if (userSettings.uselocal) console.log('popup.js: using localhost');
+    
+    if (!userSettings.accesskey) {
+      openAccessKeyDialog();
+      page.notice.setNotice('');
+      return;
+    }
+    
     var result = await getDBData();
+    console.log('getDBData result', result);
     if (!result.success) return;
     
-    page.notice.setNotice('');
+    debugMessage(JSON.stringify(result));
     
-    _debugMessage('so far, so good');
+    page.notice.setNotice('');
   }
   
 	//--------------------------------------------------------------
 	// page rendering
 	//--------------------------------------------------------------
   function renderPage() {
+    renderAccessKeyDialog();
+  }
+  
+  function renderAccessKeyDialog() {
+    page.accesskeyDialog = page.body.getElementsByClassName('accesskey-dialog')[0];
+    page.accesskeyInput = page.accesskeyDialog.getElementsByClassName('input-accesskey')[0];    
+    
+    page.accesskeyDialog.getElementsByClassName('button-accesskey')[0].addEventListener('click', (e) => { handleAccessKeySubmit(e); });
   }
     
 	//--------------------------------------------------------------
 	// updating
 	//--------------------------------------------------------------
   async function getDBData() {
-    var result = {success: false, details: 'failed to get DB data', data: null};
+    var dbResult = await getInfoDeckData();
+
+    if (dbResult.success) {
+      await saveUserSettings();
+      console.log('collate data');
+    }
     
-    var dbResult = await getDBRosterInfo();
-    if (!dbResult.success) {
-      result.details = dbResult.details;
-      return result
-    }
-    var rosterInfo = dbResult.data;
+    return dbResult;
+  }
 
-    dbResult = await getDBStudentProperties();
-    if (!dbResult.success) {
-      result.details = dbResult.details;
-      return result;
-    }
-    var extraStudentInfo = dbResult.data;
-
-    return result;
+  function openAccessKeyDialog() {    
+    UtilityKTS.setClass(page.accesskeyDialog, settings.hideClass, false);
+    page.accesskeyInput.value = '';
+    if (userSettings.accesskey) page.accesskeyInput.value = userSettings.accesskey;
   }
   
 	//--------------------------------------------------------------
 	// handlers
 	//--------------------------------------------------------------
+  async function handleAccessKeySubmit(e) {
+    var proposedKey = page.accesskeyInput.value;
+
+    if (proposedKey && proposedKey.length > 0) {
+      userSettings.accesskey = proposedKey;
+      if ( (await getDBData()) ) {
+        UtilityKTS.setClass(page.accesskeyDialog, settings.hideClass, true);
+      }
+    }
+  }
   
   //---------------------------------------
   // local storage
   //---------------------------------------
+  async function loadUserSettings() {
+    page.notice.setNotice('loading user settings...', true);
+    var paramList = [
+      {paramkey: 'infodeck-accesskey', resultkey: 'accesskey', defaultval: null},
+      {paramkey: 'infodeck-uselocal', resultkey: 'uselocal', defaultval: false},
+    ];
+    
+    userSettings = await ParamStorage.load(paramList);
+    
+    page.notice.setNotice('');
+  }
   
+  async function saveUserSettings() {
+    var paramList = [
+      {paramkey: 'infodeck-accesskey', value: userSettings.accesskey} 
+    ];
+    
+    await ParamStorage.store(paramList);
+  }
+
 	//---------------------------------------
 	// DB interface
 	//---------------------------------------
-  async function getDBRosterInfo() {
-    var dbResult = await SQLDBInterface.doGetQuery('roster-manager/query', 'rosterinfo', page.notice);
-    console.log('getDBRosterInfo', dbResult);
+  async function getInfoDeckData() {
+    var dbResult = await SQLDBInterface.doPostQuery('infodeck/query', 'infodeck-data', {"accesskey": userSettings.accesskey}, page.notice);
 
     if (!dbResult.success) {
       console.log('failed to read roster info', dbResult.details);
@@ -82,14 +127,10 @@ const app = function () {
     return dbResult;
   }
   
-  async function getDBStudentProperties() {
-    return {success: false, details: 'testing...', data: null};
-  }  
-
 	//---------------------------------------
 	// utility
 	//---------------------------------------
-  function _debugMessage(msg) {
+  function debugMessage(msg) {
     var elem = page.body.getElementsByClassName('debug')[0];
     elem.innerHTML = msg;
   }

@@ -37,7 +37,7 @@ class SQLDBInterface {
     const METHOD_TITLE = 'dbGet';
     
     var url = this.__buildApiUrl__(queryType, queryName);
-    console.log(url);
+    //console.log(url);
     var result = {success: false, details: 'unspecified error in ' + METHOD_TITLE};
 
     try {
@@ -48,7 +48,7 @@ class SQLDBInterface {
       });
 
       const json = await resp.json();
-      console.log(json);
+      //console.log(json);
 
       if (!json.success) {
         var errmsg = '*ERROR: in ' + METHOD_TITLE + ', ' + JSON.stringify(json.details);
@@ -72,6 +72,7 @@ class SQLDBInterface {
     const METHOD_TITLE = 'dbPost';
     
     var url = this.__buildApiUrl__(queryType, queryName);
+    //console.log(url);
     var result = {success: false, details: 'unspecified error in ' + METHOD_TITLE};
 
     try {
@@ -106,7 +107,7 @@ class SQLDBInterface {
   static __buildApiUrl__(queryType, queryName) {
     var dbOrigin = 'https://aardvark-studios.com';
     if (__USELOCALHOST__) {
-      console.log('using localhost');
+      console.log('SQLDBInterface: using localhost');
       dbOrigin = 'http://localhost:8000';
     }
 
