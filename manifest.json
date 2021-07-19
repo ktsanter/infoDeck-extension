@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+
+  "name": "infoDeck",
+  
+  "short_name": "infoDeck",
+  
+  "description": "Student infoDeck",
+  
+  "version": "3.01",
+  
+  "action": {
+    "default_icon": "infodeck_logo_16.png",
+    "default_popup": "popup.html",
+    "default_title": "infoDeck"
+  },
+  
+  "permissions": [
+    "storage",
+    "tabs"
+  ],  
+       
+  "icons": {
+    "16": "infodeck_logo_16.png",
+    "128": "infodeck_logo_128.png"
+   }
+}

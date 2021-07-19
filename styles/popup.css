@@ -1,0 +1,78 @@
+/*-----------------------------------------------------*/
+/* infoDeck extension styling                          */
+/*-----------------------------------------------------*/
+.colorscheme {
+  --bgPrimary: rgba(66, 98, 150, 1.0);
+  --bgSecondary: rgba(66, 98, 150, 0.2);
+  --borderPrimary: #ced4da;  
+  --borderSubtle: rgba(0,0,0, 0.2);
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  font-size: 13px;  
+  width: 38em;
+  /*height: 44em;  */
+  margin: 0;
+}
+
+.hide-me {
+  display: none;
+}
+
+/*---------------------------------------------*/
+/* access key dialog                           */
+/*---------------------------------------------*/
+.accesskey-dialog {
+  margin: 0.2em;
+  padding-bottom: 0.2em;
+}
+
+.accesskey-dialog .accesskey-text {
+  margin-bottom: 0.4em;
+}
+
+.accesskey-dialog .input-accesskey {
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  font-size: 1.0em;
+  width: 60%;
+}
+
+.accesskey-dialog .button-accesskey {
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  font-size: 1.0em;
+  color: var(--bgPrimary);
+  background-color: white;
+  border: 1px solid var(--bgPrimary);
+}
+
+.accesskey-dialog .button-accesskey:hover {
+  color: white;
+  background-color: var(--bgPrimary);
+  border-color: white;
+}
+
+/*------------------------------------------------------------------
+ * standard error and notice
+ *------------------------------------------------------------------*/
+.standard_error {
+  display: none;
+  font-style: italic;
+  color: blue;
+  margin-bottom: 0.4em;;
+}
+
+.standard-notice { 
+  display: inline-block;
+  font-size: 1em;
+  font-style: italic;
+  margin-left: 1.0em;
+  margin-right: 0.2em;
+}
+
+#noticeSpinner {
+  font-size: 0.9em;
+  margin-left: 0.2em;
+  margin-right: 0.2em;
+}
+/*-- end of standard notice and error --*/
