@@ -9,7 +9,8 @@ const app = function () {
 	const page = {};
   
 	const settings = {
-    hideClass: 'hide-me'
+    hideClass: 'hide-me',
+    info: null
 	};
   
 	//---------------------------------------
@@ -20,7 +21,7 @@ const app = function () {
     page.errorContainer = page.body.getElementsByClassName('error-container')[0];
     
     page.notice = new StandardNotice(page.errorContainer, page.errorContainer);
-    page.notice.setNotice('loading...', true);
+    page.notice.setNotice('initializing...', true);
     
     renderPage();
     
@@ -28,26 +29,35 @@ const app = function () {
     __USELOCALHOST__ = userSettings.uselocal;
     if (userSettings.uselocal) console.log('popup.js: using localhost');
     
+    var host = 'https://aardvark-studios.com';
+    if (userSettings.uselocal) host = 'http://localhost:8000';
+    settings.rosterManagerURL = host + '/roster-manager';
+    settings.helpURL = host + '/rostermanager/extension-help';
+    
+    page.notice.setNotice('');
     if (!userSettings.accesskey) {
       openAccessKeyDialog();
-      page.notice.setNotice('');
       return;
     }
     
-    var result = await getDBData();
-    console.log('getDBData result', result);
-    if (!result.success) return;
-    
-    debugMessage(JSON.stringify(result));
-    
-    page.notice.setNotice('');
+    await getDBData();
   }
   
 	//--------------------------------------------------------------
 	// page rendering
 	//--------------------------------------------------------------
   function renderPage() {
+    renderNavbar();
     renderAccessKeyDialog();
+  }
+  
+  function renderNavbar() {
+    page.navContainer = page.body.getElementsByClassName('nav-container')[0];
+    var elemDropdown = page.navContainer.getElementsByClassName('dropdown')[0];
+    
+    elemDropdown.getElementsByClassName('item-rostermanager')[0].addEventListener('click', (e) => { handleRosterManager(e); });
+    elemDropdown.getElementsByClassName('item-accesskey')[0].addEventListener('click', () => { openAccessKeyDialog(); });
+    elemDropdown.getElementsByClassName('item-help')[0].addEventListener('click', (e) => { handleHelp(e); });
   }
   
   function renderAccessKeyDialog() {
@@ -65,7 +75,11 @@ const app = function () {
 
     if (dbResult.success) {
       await saveUserSettings();
-      console.log('collate data');
+      settings.rawinfo = dbResult.data;
+      settings.studentinfo = DataPackager.packageStudentInfo(settings.rawinfo.rosterinfo, settings.rawinfo.studentproperties);
+      settings.mentorinfo = DataPackager.packageMentorInfo(settings.rawinfo.rosterinfo);
+
+      updateDisplay();
     }
     
     return dbResult;
@@ -76,6 +90,10 @@ const app = function () {
     page.accesskeyInput.value = '';
     if (userSettings.accesskey) page.accesskeyInput.value = userSettings.accesskey;
   }
+  
+  function updateDisplay() {
+    debugMessage(JSON.stringify(settings.studentinfo) + JSON.stringify(settings.mentorinfo));
+  }    
   
 	//--------------------------------------------------------------
 	// handlers
@@ -89,6 +107,14 @@ const app = function () {
         UtilityKTS.setClass(page.accesskeyDialog, settings.hideClass, true);
       }
     }
+  }
+  
+  function handleRosterManager(e) {
+    window.open(settings.rosterManagerURL, '_blank');
+  }
+  
+  function handleHelp(e) {
+    window.open(settings.helpURL, '_blank');
   }
   
   //---------------------------------------

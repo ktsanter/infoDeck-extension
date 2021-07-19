@@ -17,14 +17,32 @@
   </head>
   
   <body class="colorscheme">
-    infoDeck
-    <div class="error-container"> </div>  
-    
-    <div class="accesskey-dialog hide-me">
-      <div class="accesskey-text"> Please enter the access key from the Roster Manager composer </div>
-      <input type="text" class="input-accesskey">
-      <button class="button-accesskey"> submit </button>        
-    </div>    
-    <div class="debug"> </div>
+    <div class="contents">
+      <div class="nav-container">
+        <ul>
+          <li><div class="navbar-logo">infoDeck</div></li>
+          <li class="dropdown">
+            <a class="dropbtn">
+              <i class="fas fa-bars"> </i>
+            </a>
+            <div class="dropdown-content">
+              <a href="#" class="dropdown-item item-rostermanager"> Roster Manager </a>
+              <a href="#" class="dropdown-item item-accesskey"> access key </a>
+              <a href="#" class="dropdown-item item-help"> help </a>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="error-container"> </div>  
+      
+      <div class="accesskey-dialog hide-me">
+        <div class="accesskey-text"> Please enter the access key from the Roster Manager composer </div>
+        <input type="text" class="input-accesskey">
+        <button class="button-accesskey"> submit </button>        
+      </div>    
+
+      <div class="debug"> </div>
+    </div>
   </body>
 </html>

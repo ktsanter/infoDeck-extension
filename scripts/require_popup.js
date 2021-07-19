@@ -6,6 +6,7 @@ define(function (require) {
   require('standard_notice'); 
   require('sqldbinterface'); 
   require('paramstorage');  
+  require('classDataPackager');
 
   require('popup');
 
