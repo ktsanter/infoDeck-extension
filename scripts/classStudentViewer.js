@@ -32,7 +32,6 @@ class StudentViewer {
   }
   
   update(studentData) {
-    console.log('StudentViewer.update', studentData);
     this.data = studentData;
 
     this._updateStudentList();
@@ -60,7 +59,6 @@ class StudentViewer {
   
   _displayStudentInfo(studentName) {
     var studentData = this.data.students[studentName];
-    console.log('studentData',  studentData);
 
     UtilityKTS.setClass(this.iconIEP, 'hide-me', !studentData.iep);
     UtilityKTS.setClass(this.icon504, 'hide-me', !studentData["504"]);
@@ -72,41 +70,50 @@ class StudentViewer {
     this.studentDataContainer.appendChild(CreateElement.createDiv(null, null, studentData.enrollments[0].email));
     this.studentDataContainer.appendChild(CreateElement.createDiv(null, null, studentData.enrollments[0].affiliation));
     
-    this.studentDataContainer.appendChild(this._displayEnrollments(studentData.enrollments));
+    this.studentDataContainer.appendChild(this._displayEnrollments(studentData.enrollments, studentData.enddateoverride));
     this.studentDataContainer.appendChild(this._displayMentors(studentData.mentors));
     this.studentDataContainer.appendChild(this._displayGuardians(studentData.guardians));
+    this.studentDataContainer.appendChild(this._displayNotes(studentData));
   }
   
   _displayPreferredName(studentData) {
-    var container = CreateElement.createDiv(null, null);
-    
-    var icon = CreateElement.createIcon(null, 'icon icon-preferredname fas fa-edit');
-    icon.title = 'edit preferred name';
-    icon.setAttribute("studentdata", JSON.stringify(studentData));
-    icon.addEventListener('click', (e) => { this._handlePreferredNameEdit(e); });
-    container.appendChild(icon);
-    
-    container.appendChild(CreateElement.createSpan(null, null, studentData.preferredname));
+    var container = CreateElement.createDiv(null, 'preferred-name');
+
+    if (studentData.preferredname.length == 0) {
+      container.innerHTML = 'no preferred name';
+      container.classList.add('no-preferredname');
+    } else {
+      container.innerHTML = studentData.preferredname;
+    }
+
+    container.title = 'edit preferred name';
+    container.setAttribute("studentdata", JSON.stringify(studentData));
+    container.addEventListener('click', (e) => { this._handlePreferredNameEdit(e); });
     
     return container;
   }
   
-  _displayEnrollments(enrollments) {
+  _displayEnrollments(enrollments, enddateOverrides) {
     var container = CreateElement.createDiv(null, 'enrollments');
     container.appendChild(CreateElement.createDiv(null, 'enrollments-label', 'enrollments'));
     
     for (var i = 0; i < enrollments.length; i++) {
-      var termContainer = CreateElement.createDiv(null, null);
-      container.appendChild(termContainer);
+      var enrollmentContainer = CreateElement.createDiv(null, null);
+      container.appendChild(enrollmentContainer);
       
       var elemSection = CreateElement.createDiv(null, 'enrollmentcell cell-section', enrollments[i].section);
       elemSection.title = enrollments[i].term;
       var elemStartDate = CreateElement.createDiv(null, 'enrollmentcell cell-startdate', enrollments[i].startdate);
       var elemEndDate = CreateElement.createDiv(null, 'enrollmentcell cell-enddate', enrollments[i].enddate);
+      var override = this._findEnddateOverride(enrollments[i], enddateOverrides);
+      if (override) {
+        elemEndDate.innerHTML = override;
+        elemEndDate.appendChild(CreateElement.createIcon(null, 'icon icon-info far fa-calendar-alt', 'original end date: ' + enrollments[i].enddate));
+      }
 
-      termContainer.appendChild(elemSection);
-      termContainer.appendChild(elemStartDate);
-      termContainer.appendChild(elemEndDate);
+      enrollmentContainer.appendChild(elemSection);
+      enrollmentContainer.appendChild(elemStartDate);
+      enrollmentContainer.appendChild(elemEndDate);
     }
     
     return container;
@@ -162,18 +169,124 @@ class StudentViewer {
     return container;
   }
   
-  _editPreferredName(studentData) {
+  _displayNotes(studentData) {
+    var container = CreateElement.createDiv(null, 'notes');
+    var notes = studentData.notes;
+
+    var elemLabel = CreateElement.createDiv(null, 'notes-label', 'notes')
+    container.appendChild(elemLabel);
+    var icon = CreateElement.createIcon(null, 'icon icon-addnote far fa-plus-square', 'add note');
+    icon.setAttribute('studentdata', JSON.stringify(studentData));
+    icon.addEventListener('click', (e) => { this._handleNoteAdd(e); });
+    elemLabel.appendChild(icon);
+    
+    for (var i = 0; i < notes.length; i++) {
+      var termContainer = CreateElement.createDiv(null, null);
+      container.appendChild(termContainer);
+      
+      var elemDateStamp = CreateElement.createDiv(null, 'notecell cell-datestamp', notes[i].datestamp);
+      var elemNoteText = CreateElement.createDiv(null, 'notecell cell-notetext', notes[i].notetext);
+      elemNoteText.setAttribute('studentdata', JSON.stringify(studentData));
+      elemNoteText.setAttribute('notedata', JSON.stringify(notes[i]));
+      elemNoteText.addEventListener('click', (e) => { this._handleNoteEdit(e); });
+
+      var elemControls = CreateElement.createDiv(null, 'notecell cell-controls');
+      icon = CreateElement.createIcon(null, 'icon icon-deletenote far fa-trash-alt', 'delete note');
+      icon.setAttribute('studentdata', JSON.stringify(studentData));
+      icon.setAttribute('notedata', JSON.stringify(notes[i]));
+      icon.addEventListener('click', (e) => { this._handleNoteDelete(e); });
+      elemControls.appendChild(icon);
+
+      termContainer.appendChild(elemDateStamp);
+      termContainer.appendChild(elemNoteText);
+      termContainer.appendChild(elemControls);
+    }
+    
+    return container;
+  }
+    
+  _findEnddateOverride(enrollment, overrides) {
+    var found = null;
+    
+    for (var i = 0; i < overrides.length && !found; i++) {
+      if (enrollment.section == overrides[i].section) {
+        found = overrides[i].enddate;
+      }
+    }
+    
+    return found;
+  }
+  
+  async _editPreferredName(studentData) {
     var currentValue = studentData.preferredname;
 
     var msg = 'Please enter the preferred name for the student';
     var result = prompt(msg, currentValue);
-    if (!result || result == currentValue) return;
+    if (!result || result == currentValue || result.length == 0) return;
     result = this._sanitizeText(result);
-    
-    var studentFullName = studentData.enrollments[0].student;
-    console.log('save "' + result + '" as the preferred name for ' + studentFullName);
+         
+    var callbackResult = await this.config.callbackPropertyChange({
+      "action": 'update-preferredname',
+      "studentdata": studentData,
+      "value": result
+    });
+
+    if (callbackResult.success) this._updatePreferredName(callbackResult.data);
   }
     
+  async _editNote(studentData, noteData) {
+    var currentValue = '';
+    if (noteData) currentValue = noteData.notetext;
+    var msg = 'Please enter the note text';
+    var result = prompt(msg, currentValue);
+    if (!result || result == currentValue) return;
+    result = this._sanitizeText(result);
+    var callbackResult = null;
+    
+    if (noteData) {
+      callbackResult = await this.config.callbackPropertyChange({
+        "action": 'update-note',
+        "studentdata": studentData,
+        "notedata": noteData,
+        "value": result
+      });
+
+    } else {
+      callbackResult = await this.config.callbackPropertyChange({
+        "action": 'add-note',
+        "studentdata": studentData,
+        "value": result
+      });
+    }
+
+    if (callbackResult.success) this._updateNotes(callbackResult.data);
+  }
+    
+  async _deleteNote(studentData, noteData) {
+    var msg = 'The note ';
+    msg += '\n"' + noteData.notetext + '" ';
+    msg += '\n will be deleted.';
+    msg += '\n\n Choose OK to continue.';
+    var confirmed = confirm(msg);
+    if (!confirmed) return;
+    
+    var callbackResult = await this.config.callbackPropertyChange({
+      "action": 'delete-note',
+      "studentdata": studentData,
+      "notedata": noteData
+    });
+    
+    if (callbackResult.success) this._updateNotes(callbackResult.data);
+  }
+  
+  _updatePreferredName(preferredName) {
+    console.log('_updatePreferredName', preferredName);
+  }
+  
+  _updateNotes(noteData) {
+    console.log('_updateNotes', noteData);
+  }
+  
   //--------------------------------------------------------------
   // handlers
   //-------------------------------------------------------------- 
@@ -181,8 +294,26 @@ class StudentViewer {
     this._displayStudentInfo(selection);
   }
   
-  _handlePreferredNameEdit(e) {
-    this._editPreferredName(JSON.parse(e.target.getAttribute("studentdata")));
+  async _handlePreferredNameEdit(e) {
+    await this._editPreferredName(JSON.parse(e.target.getAttribute("studentdata")));
+  }
+  
+  async _handleNoteAdd(e) {
+    await this._editNote(JSON.parse(e.target.getAttribute("studentdata")));
+  }
+  
+  async _handleNoteEdit(e) {
+    await this._editNote(
+      JSON.parse(e.target.getAttribute("studentdata")),
+      JSON.parse(e.target.getAttribute("notedata"))
+    );
+  }
+  
+  async _handleNoteDelete(e) {
+    await this._deleteNote(
+      JSON.parse(e.target.getAttribute("studentdata")),
+      JSON.parse(e.target.getAttribute("notedata"))
+    );
   }
   
   //---------------------------------------
@@ -223,5 +354,4 @@ class StudentViewer {
     
     return sanitized;
   }
-  
 }

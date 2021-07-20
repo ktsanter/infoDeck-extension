@@ -175,6 +175,18 @@ body {
   display: inline-block;
 }
 
+.content-container.students .student-data-container {
+  padding-bottom: 0.2em;  
+}
+
+.content-container.students .student-data-container .preferred-name {
+  cursor: pointer;
+}
+
+.content-container.students .student-data-container .preferred-name.no-preferredname {
+  font-style: italic;  
+}
+
 .content-container.students .icon {
   vertical-align: middle;
   padding-bottom: 0.2em;
@@ -191,21 +203,25 @@ body {
   font-size: 1.4em;
 }
 
-.content-container.students .icon.icon-preferredname {
+.content-container.students .icon.icon-info,
+.content-container.students .icon.icon-addnote,
+.content-container.students .icon.icon-deletenote
+ {
+  cursor: pointer;
   font-size: 1.0em;
-  margin-left: 0;
-  margin-right: 0.2em;
 }
 
 .content-container.students .enrollments, 
 .content-container.students .mentors,
-.content-container.students .guardians {
+.content-container.students .guardians,
+.content-container.students .notes {
   margin-top: 0.4em;
 }
 
 .content-container.students .enrollments-label, 
 .content-container.students .mentors-label,
-.content-container.students .guardians-label {
+.content-container.students .guardians-label,
+.content-container.students .notes-label  {
   font-weight: bold;
 }
 
@@ -216,7 +232,8 @@ body {
 
 .content-container.students .enrollmentcell, 
 .content-container.students .mentorcell,
-.content-container.students .guardiancell {
+.content-container.students .guardiancell,
+.content-container.students .notecell {
   display: inline-block;
   vertical-align: top;
 }
@@ -230,7 +247,7 @@ body {
 }
 
 .content-container.students .enrollmentcell.cell-enddate {
-  width: 6.0em;
+  width: 7.0em;
 }
 
 .content-container.students .mentorcell.cell-name,
@@ -246,6 +263,15 @@ body {
 .content-container.students .mentorcell.cell-phone,
 .content-container.students .guardiancell.cell-phone {
   width: 8.0em;
+}
+
+.content-container.students .notecell.cell-datestamp {
+  width: 6.0em;
+}
+
+.content-container.students .notecell.cell-notetext {
+  width: 25.0em;
+  cursor: pointer;
 }
 
 /*---------------------------------------------*/

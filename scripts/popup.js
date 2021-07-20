@@ -18,8 +18,8 @@ const app = function () {
 	// get things going
 	//----------------------------------------
 	async function init () {
-    console.log('add end date override for student');
-    console.log('add notes for student');
+    console.log('add DB for notes');
+    console.log('add DB for preferred name');
     
     page.body = document.getElementsByTagName('body')[0];
     page.errorContainer = page.body.getElementsByClassName('error-container')[0];
@@ -50,6 +50,7 @@ const app = function () {
     if (userSettings.uselocal) host = 'http://localhost:8000';
     
     settings.rosterManagerURL = host + '/roster-manager';
+    settings.endDateManagerURL = host + '/enddate-manager/manager';
     settings.helpURL = host + '/rostermanager/extension-help';   
   }    
 	//--------------------------------------------------------------
@@ -66,9 +67,10 @@ const app = function () {
     page.navContainer = page.body.getElementsByClassName('nav-container')[0];
     var elemDropdown = page.navContainer.getElementsByClassName('dropdown')[0];
     
-    elemDropdown.getElementsByClassName('item-rostermanager')[0].addEventListener('click', (e) => { handleRosterManager(e); });
+    elemDropdown.getElementsByClassName('item-rostermanager')[0].addEventListener('click', (e) => { openRosterManager(e); });
+    elemDropdown.getElementsByClassName('item-enddatemanager')[0].addEventListener('click', (e) => { openEndDateManager(e); });
     elemDropdown.getElementsByClassName('item-accesskey')[0].addEventListener('click', () => { navDispatch(settings.accesskeydispatch); });
-    elemDropdown.getElementsByClassName('item-help')[0].addEventListener('click', (e) => { handleHelp(e); });
+    elemDropdown.getElementsByClassName('item-help')[0].addEventListener('click', (e) => { openHelp(e); });
     
     var navbarItems = page.navContainer.getElementsByClassName('navbar-item');
     for (var i = 0; i < navbarItems.length; i++) {
@@ -80,7 +82,8 @@ const app = function () {
     page.studentsContainer = page.body.getElementsByClassName('content-container students')[0];
     settings.studentViewer = new StudentViewer({
       "container": page.studentsContainer,
-      "message": message
+      "message": message,
+      "callbackPropertyChange": handleStudentPropertChange
     });
     settings.studentViewer.render();
   }
@@ -200,12 +203,21 @@ const app = function () {
     }
   }
   
-  function handleRosterManager(e) {
+  function openRosterManager(e) {
     window.open(settings.rosterManagerURL, '_blank');
   }
   
-  function handleHelp(e) {
+  function openEndDateManager(e) {
+    window.open(settings.endDateManagerURL, '_blank');
+  }
+  
+  function openHelp(e) {
     window.open(settings.helpURL, '_blank');
+  }
+  
+  async function handleStudentPropertChange(params) {
+    console.log('handleStudentPropertChange', params);
+    return {success: true, details: 'okeydokey', data: {"xxx": "yyy"}};
   }
   
   //---------------------------------------
