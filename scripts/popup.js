@@ -18,6 +18,9 @@ const app = function () {
 	// get things going
 	//----------------------------------------
 	async function init () {
+    console.log('add end date override for student');
+    console.log('add notes for student');
+    
     page.body = document.getElementsByTagName('body')[0];
     page.errorContainer = page.body.getElementsByClassName('error-container')[0];
     page.messageContainer = page.body.getElementsByClassName('message')[0];
@@ -56,7 +59,6 @@ const app = function () {
     renderNavbar();
     renderStudents();
     renderMentors();
-    renderDebug();
     renderAccessKeyDialog();
   }
   
@@ -90,10 +92,6 @@ const app = function () {
       "message": message
     });
     settings.mentorViewer.render();  
-  }
-  
-  function renderDebug() {
-    page.debugContainer = page.body.getElementsByClassName('content-container debug')[0];
   }
   
   function renderAccessKeyDialog() {
@@ -139,8 +137,7 @@ const app = function () {
     
     var routeMap = {
       "students": showStudents,
-      "mentors": showMentors,
-      "debug": showDebug
+      "mentors": showMentors
     }
     
     settings.currentView = viewName;    
@@ -154,7 +151,6 @@ const app = function () {
   }
   
   function showMentors() {}
-  function showDebug() {}
   
   function mainNavbarEnable(enable) {
     var navbarItems = page.navContainer.getElementsByClassName('navbar-item');
@@ -173,7 +169,6 @@ const app = function () {
   function updateDisplay() {
     settings.studentViewer.update(settings.studentinfo);
     settings.mentorViewer.update(settings.mentorinfo);
-    debugMessage('default debug message');
   }    
   
 	//--------------------------------------------------------------
@@ -185,8 +180,7 @@ const app = function () {
     var dispatchMap = {
       "accesskey": function() { showContents('accesskey'); },
       "students": function() {showContents('students'); },
-      "mentors": function() {showContents('mentors'); },
-      "debug": function() {showContents('debug'); }
+      "mentors": function() {showContents('mentors'); }
     }
 
     var dispatchTarget = e.target.id;
@@ -255,10 +249,6 @@ const app = function () {
 	//---------------------------------------
   function message(msg) {
     page.messageContainer.innerHTML = msg;
-  }
-  
-  function debugMessage(msg) {
-    page.debugContainer.innerHTML = msg;
   }
   
 	//---------------------------------------

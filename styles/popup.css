@@ -165,6 +165,12 @@ body {
 /*---------------------------------------------*/
 .content-container.students {}
 
+.content-container.students .student-selection-container {
+  background-color: var(--bgSecondary);
+  padding: 0.2em;
+  margin-bottom: 0.2em;
+}
+
 .content-container.students .icon-container {
   display: inline-block;
 }
@@ -183,6 +189,63 @@ body {
 .content-container.students .icon:not(.icon-image) {
   color: var(--bgPrimary);
   font-size: 1.4em;
+}
+
+.content-container.students .icon.icon-preferredname {
+  font-size: 1.0em;
+  margin-left: 0;
+  margin-right: 0.2em;
+}
+
+.content-container.students .enrollments, 
+.content-container.students .mentors,
+.content-container.students .guardians {
+  margin-top: 0.4em;
+}
+
+.content-container.students .enrollments-label, 
+.content-container.students .mentors-label,
+.content-container.students .guardians-label {
+  font-weight: bold;
+}
+
+.content-container.students .mentors .no-mentors,
+.content-container.students .guardians .no-guardians {
+  font-style: italic;
+}
+
+.content-container.students .enrollmentcell, 
+.content-container.students .mentorcell,
+.content-container.students .guardiancell {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.content-container.students .enrollmentcell.cell-section {
+  width: 20.0em;
+}
+
+.content-container.students .enrollmentcell.cell-startdate {
+  width: 6.0em;
+}
+
+.content-container.students .enrollmentcell.cell-enddate {
+  width: 6.0em;
+}
+
+.content-container.students .mentorcell.cell-name,
+.content-container.students .guardiancell.cell-name {
+  width: 13.0em;
+}
+
+.content-container.students .mentorcell.cell-email,
+.content-container.students .guardiancell.cell-email {
+  width: 15.0em;
+}
+
+.content-container.students .mentorcell.cell-phone,
+.content-container.students .guardiancell.cell-phone {
+  width: 8.0em;
 }
 
 /*---------------------------------------------*/
