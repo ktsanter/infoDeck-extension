@@ -11,6 +11,7 @@
       crossorigin="anonymous"
     >
 
+    <link href="styles/fuzzyinputcontrol.css" rel="stylesheet" type="text/css">
     <link href="styles/popup.css" rel="stylesheet" type="text/css">
     
     <script data-main="scripts/require_popup" src="scripts/require.js"></script>
@@ -20,7 +21,11 @@
     <div class="contents">
       <div class="nav-container">
         <ul>
-          <li><div class="navbar-logo">infoDeck</div></li>
+          <li><div class="navbar-logo"> infoDeck </div></li>
+          <li><div class="navbar-item" id="students"> students </div> </li>
+          <li><div class="navbar-item" id="mentors"> mentors </div> </li>
+          <li><div class="navbar-item" id="debug"> debug </div> </li>
+
           <li class="dropdown">
             <a class="dropbtn">
               <i class="fas fa-bars"> </i>
@@ -34,15 +39,18 @@
         </ul>
       </div>
 
-      <div class="error-container"> </div>  
+      <div class="message"> </div>
+      <div class="error-container"> </div>
       
-      <div class="accesskey-dialog hide-me">
+      <div id="content-students" class="content-container students hide-me"> </div>
+      <div id="content-mentors" class="content-container mentors hide-me"> </div>
+      <div id="content-debug" class="content-container debug hide-me"> </div>
+      
+      <div id="content-accesskey" class="content-container accesskey-dialog hide-me">
         <div class="accesskey-text"> Please enter the access key from the Roster Manager composer </div>
         <input type="text" class="input-accesskey">
         <button class="button-accesskey"> submit </button>        
       </div>    
-
-      <div class="debug"> </div>
     </div>
   </body>
 </html>

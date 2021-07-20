@@ -1,12 +1,14 @@
 define(function (require) {
-  //require('clipboard_copy'); 
-
   require('create_element');  
   require('utilitykts');
   require('standard_notice'); 
   require('sqldbinterface'); 
-  require('paramstorage');  
+  require('paramstorage'); 
+  require('clipboard_copy');   
   require('classDataPackager');
+  require('classMentorViewer');
+  require('classStudentViewer');
+  require('fuzzyinputcontrol');
 
   require('popup');
 

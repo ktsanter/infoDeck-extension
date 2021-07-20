@@ -6,6 +6,7 @@
   --bgSecondary: rgba(66, 98, 150, 0.2);
   --borderPrimary: #ced4da;  
   --borderSubtle: rgba(0,0,0, 0.2);
+  --bgShaded: #e9ecef;  
 }
 
 body {
@@ -24,26 +25,18 @@ body {
 /* contents                                    */
 /*---------------------------------------------*/
 .contents {
-  background-color: var(--bgSecondary);
-  border: 1px solid var(--bgPrimary);
-  width: 100%;
-  position: relative;
-}
-
-/*---------------------------------------------*/
-/* error container                             */
-/*---------------------------------------------*/
-.error-container {
-  color: white;
-  background-color: var(--bgPrimary);
-  position: absolute;
-  right: 2.0em;
-  top: 0.2em;
+  padding-left: 0.2em;
 }
 
 /*---------------------------------------------*/
 /* navbar                                      */
 /*---------------------------------------------*/
+.nav-container {
+  position: sticky;
+  top: 0;
+  left: 0;
+}
+
 .nav-container ul {
   list-style-type: none;
   margin: 0;
@@ -71,10 +64,27 @@ body {
 
 .nav-container li .navbar-logo {
   color: white;
-  background-color: var(--bgPrimary);
+  border: 1px solid white;
+  border-radius: 0.4em;
   cursor: default;
-  padding-top: 0.2em;
-  padding-left: 0.2em;
+  padding: 0 0.2em;
+  margin: 0.2em 0.6em 0.2em 0;
+}
+
+.nav-container li .navbar-item {
+  color: white;
+  border: 1px solid var(--bgPrimary);
+  cursor: pointer;
+  margin: 0.2em 0.2em 0.2em 0;
+}
+
+.nav-container li .navbar-item.emphasized {
+  font-weight: bold;
+}
+
+.nav-container li .navbar-item.disabled {
+  color: #aaa;
+  cursor: default;
 }
 
 .nav-container li.dropdown {
@@ -107,6 +117,18 @@ body {
 }
 
 /*---------------------------------------------*/
+/* message                                     */
+/*---------------------------------------------*/
+.message {
+  position: fixed;
+  top: 0;
+  right: 3em;
+  color: white;
+  font-style: italic;
+  margin-top: 0.3em;
+}
+
+/*---------------------------------------------*/
 /* access key dialog                           */
 /*---------------------------------------------*/
 .accesskey-dialog {
@@ -136,6 +158,80 @@ body {
   color: white;
   background-color: var(--bgPrimary);
   border-color: white;
+}
+
+/*---------------------------------------------*/
+/* StudentViewer                                */
+/*---------------------------------------------*/
+.content-container.students {}
+
+.content-container.students .icon-container {
+  display: inline-block;
+}
+
+.content-container.students .icon {
+  vertical-align: middle;
+  padding-bottom: 0.2em;
+  margin-left: 0.2em;
+}
+
+.content-container.students .icon.icon-image {
+  width: 1.6em;
+  height: auto;
+}
+
+.content-container.students .icon:not(.icon-image) {
+  color: var(--bgPrimary);
+  font-size: 1.4em;
+}
+
+/*---------------------------------------------*/
+/* MentorViewer                                */
+/*---------------------------------------------*/
+.content-container.mentors {}
+
+.content-container.mentors .term-label {
+  font-weight: bold;
+  border: 1px solid var(--bgPrimary);
+  background-color: var(--bgShaded);
+  padding-left: 0.1em;
+}
+
+.content-container.mentors .term-label.not-first {
+  margin-top: 0.5em;
+}
+
+.content-container.mentors .section-label {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.content-container.mentors .section-label.not-first {
+  margin-top: 0.4em;
+}
+
+.content-container.mentors .header-label {
+  display: inline-block;
+  font-weight: bold;
+}
+
+.content-container.mentors .cell-label {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.content-container.mentors .cell-name {
+  width: 14.0em;
+}
+
+.content-container.mentors .cell-email {
+  width: 14.0em;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.content-container.mentors .cell-phone {
+  width: 8.0em;
 }
 
 /*------------------------------------------------------------------

@@ -10,7 +10,8 @@ const app = function () {
   
 	const settings = {
     hideClass: 'hide-me',
-    info: null
+    info: null,
+    accesskeydispatch: {"target": {"id": "accesskey"}, "dummy": true}
 	};
   
 	//---------------------------------------
@@ -19,35 +20,43 @@ const app = function () {
 	async function init () {
     page.body = document.getElementsByTagName('body')[0];
     page.errorContainer = page.body.getElementsByClassName('error-container')[0];
+    page.messageContainer = page.body.getElementsByClassName('message')[0];
     
     page.notice = new StandardNotice(page.errorContainer, page.errorContainer);
     page.notice.setNotice('initializing...', true);
     
     renderPage();
+    mainNavbarEnable(false);
     
     await loadUserSettings();
-    __USELOCALHOST__ = userSettings.uselocal;
-    if (userSettings.uselocal) console.log('popup.js: using localhost');
-    
-    var host = 'https://aardvark-studios.com';
-    if (userSettings.uselocal) host = 'http://localhost:8000';
-    settings.rosterManagerURL = host + '/roster-manager';
-    settings.helpURL = host + '/rostermanager/extension-help';
-    
-    page.notice.setNotice('');
+    configureBasedOnUserSettings();
     if (!userSettings.accesskey) {
-      openAccessKeyDialog();
+      navDispatch(settings.accesskeydispatch);
       return;
     }
     
     await getDBData();
+    mainNavbarEnable(true);
+    showContents('students');
   }
-  
+
+  function configureBasedOnUserSettings() {
+    __USELOCALHOST__ = userSettings.uselocal;
+
+    var host = 'https://aardvark-studios.com';
+    if (userSettings.uselocal) host = 'http://localhost:8000';
+    
+    settings.rosterManagerURL = host + '/roster-manager';
+    settings.helpURL = host + '/rostermanager/extension-help';   
+  }    
 	//--------------------------------------------------------------
 	// page rendering
 	//--------------------------------------------------------------
   function renderPage() {
     renderNavbar();
+    renderStudents();
+    renderMentors();
+    renderDebug();
     renderAccessKeyDialog();
   }
   
@@ -56,8 +65,35 @@ const app = function () {
     var elemDropdown = page.navContainer.getElementsByClassName('dropdown')[0];
     
     elemDropdown.getElementsByClassName('item-rostermanager')[0].addEventListener('click', (e) => { handleRosterManager(e); });
-    elemDropdown.getElementsByClassName('item-accesskey')[0].addEventListener('click', () => { openAccessKeyDialog(); });
+    elemDropdown.getElementsByClassName('item-accesskey')[0].addEventListener('click', () => { navDispatch(settings.accesskeydispatch); });
     elemDropdown.getElementsByClassName('item-help')[0].addEventListener('click', (e) => { handleHelp(e); });
+    
+    var navbarItems = page.navContainer.getElementsByClassName('navbar-item');
+    for (var i = 0; i < navbarItems.length; i++) {
+      navbarItems[i].addEventListener('click', (e) => { navDispatch(e); });
+    }
+  }
+  
+  function renderStudents() {
+    page.studentsContainer = page.body.getElementsByClassName('content-container students')[0];
+    settings.studentViewer = new StudentViewer({
+      "container": page.studentsContainer,
+      "message": message
+    });
+    settings.studentViewer.render();
+  }
+  
+  function renderMentors() {
+    page.mentorsContainer = page.body.getElementsByClassName('content-container mentors')[0];
+    settings.mentorViewer = new MentorViewer({
+      "container": page.mentorsContainer,
+      "message": message
+    });
+    settings.mentorViewer.render();  
+  }
+  
+  function renderDebug() {
+    page.debugContainer = page.body.getElementsByClassName('content-container debug')[0];
   }
   
   function renderAccessKeyDialog() {
@@ -84,27 +120,88 @@ const app = function () {
     
     return dbResult;
   }
-
+  
   function openAccessKeyDialog() {    
+    console.log('openAccessKeyDialog');
     UtilityKTS.setClass(page.accesskeyDialog, settings.hideClass, false);
     page.accesskeyInput.value = '';
     if (userSettings.accesskey) page.accesskeyInput.value = userSettings.accesskey;
   }
   
+  function showContents(viewName) {
+    message('');
+    var containers = page.body.getElementsByClassName('content-container');
+    for (var i = 0; i < containers.length; i++) {
+      var id = containers[i].id;
+      UtilityKTS.setClass(containers[i], settings.hideClass, id != 'content-' + viewName);
+    }
+    UtilityKTS.setClass(page.errorContainer, settings.hideClass, true);
+    
+    var routeMap = {
+      "students": showStudents,
+      "mentors": showMentors,
+      "debug": showDebug
+    }
+    
+    settings.currentView = viewName;    
+    emphasizeNavbarItem();
+    
+    if (routeMap.hasOwnProperty(viewName)) routeMap[viewName]();
+  }
+  
+  function showStudents() {
+    settings.studentViewer.focusOnInput();
+  }
+  
+  function showMentors() {}
+  function showDebug() {}
+  
+  function mainNavbarEnable(enable) {
+    var navbarItems = page.navContainer.getElementsByClassName('navbar-item');
+    for (var i = 0; i < navbarItems.length; i++) {
+      UtilityKTS.setClass(navbarItems[i], 'disabled', !enable);
+    }
+  }
+
+  function emphasizeNavbarItem() {
+    var items = page.navContainer.getElementsByClassName('navbar-item');
+    for (var i = 0; i < items.length; i++) {
+      UtilityKTS.setClass(items[i], 'emphasized', items[i].id == settings.currentView);
+    }
+  }
+  
   function updateDisplay() {
-    debugMessage(JSON.stringify(settings.studentinfo) + JSON.stringify(settings.mentorinfo));
+    settings.studentViewer.update(settings.studentinfo);
+    settings.mentorViewer.update(settings.mentorinfo);
+    debugMessage('default debug message');
   }    
   
 	//--------------------------------------------------------------
 	// handlers
 	//--------------------------------------------------------------
+  function navDispatch(e) {
+    if (!e.dummy && e.target.classList.contains('disabled')) return;
+    
+    var dispatchMap = {
+      "accesskey": function() { showContents('accesskey'); },
+      "students": function() {showContents('students'); },
+      "mentors": function() {showContents('mentors'); },
+      "debug": function() {showContents('debug'); }
+    }
+
+    var dispatchTarget = e.target.id;
+    dispatchMap[dispatchTarget]();
+  }
+  
   async function handleAccessKeySubmit(e) {
     var proposedKey = page.accesskeyInput.value;
 
     if (proposedKey && proposedKey.length > 0) {
       userSettings.accesskey = proposedKey;
-      if ( (await getDBData()) ) {
-        UtilityKTS.setClass(page.accesskeyDialog, settings.hideClass, true);
+      var result = await getDBData();
+      if ( result.success ) {
+        showContents('students');
+        mainNavbarEnable(true);
       }
     }
   }
@@ -156,9 +253,12 @@ const app = function () {
 	//---------------------------------------
 	// utility
 	//---------------------------------------
+  function message(msg) {
+    page.messageContainer.innerHTML = msg;
+  }
+  
   function debugMessage(msg) {
-    var elem = page.body.getElementsByClassName('debug')[0];
-    elem.innerHTML = msg;
+    page.debugContainer.innerHTML = msg;
   }
   
 	//---------------------------------------
