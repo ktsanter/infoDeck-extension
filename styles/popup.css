@@ -176,7 +176,7 @@ body {
 }
 
 .content-container.students .student-data-container {
-  padding-bottom: 0.2em;  
+  padding: 0.3em;
 }
 
 .content-container.students .student-data-container .preferred-name:hover {
