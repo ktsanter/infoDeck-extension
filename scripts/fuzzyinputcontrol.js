@@ -123,7 +123,14 @@ class FuzzyInputControl {
           
           elemItem.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
           elemItem.addEventListener("click", function (me) { return function(e) {
-            me._elemInput.value = e.target.getElementsByTagName("input")[0].value;
+            var targetInput = e.target.getElementsByTagName("input");
+            if (targetInput.length == 0) {
+              targetInput = e.target.parentNode.getElementsByTagName("input")[0];
+            } else {
+              targetInput = targetInput[0];
+            }
+
+            me._elemInput.value = targetInput.value;
             me._closeAllLists();
             me._handleSelectionCallback(me._elemInput.value);     
           }; }(this));
