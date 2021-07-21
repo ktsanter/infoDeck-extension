@@ -35,7 +35,9 @@ const app = function () {
       return;
     }
     
-    await getDBData();
+    var initialLoad = await getDBData();
+    if (!initialLoad.success) return;
+    
     mainNavbarEnable(true);
     showContents('students');
   }
@@ -114,6 +116,10 @@ const app = function () {
       settings.mentorinfo = DataPackager.packageMentorInfo(settings.rawinfo.rosterinfo);
 
       if (!skipDisplayUpdate) updateDisplay();
+      
+    } else {
+      console.log('getDBData: fail', dbResult);
+      message('failed to fetch data');
     }
     
     return dbResult;
@@ -136,7 +142,8 @@ const app = function () {
     
     var routeMap = {
       "students": showStudents,
-      "mentors": showMentors
+      "mentors": showMentors,
+      "accesskey": openAccessKeyDialog
     }
     
     settings.currentView = viewName;    
@@ -187,6 +194,7 @@ const app = function () {
   }
   
   async function handleAccessKeySubmit(e) {
+    var originalKey = userSettings.accesskey;
     var proposedKey = page.accesskeyInput.value;
 
     if (proposedKey && proposedKey.length > 0) {
@@ -195,6 +203,9 @@ const app = function () {
       if ( result.success ) {
         showContents('students');
         mainNavbarEnable(true);
+      } else {
+        userSettings.accesskey = originalKey;
+        message('invalid access key');
       }
     }
   }
