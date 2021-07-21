@@ -18,9 +18,6 @@ const app = function () {
 	// get things going
 	//----------------------------------------
 	async function init () {
-    console.log('add DB for notes');
-    console.log('add DB for preferred name');
-    
     page.body = document.getElementsByTagName('body')[0];
     page.errorContainer = page.body.getElementsByClassName('error-container')[0];
     page.messageContainer = page.body.getElementsByClassName('message')[0];
@@ -83,7 +80,7 @@ const app = function () {
     settings.studentViewer = new StudentViewer({
       "container": page.studentsContainer,
       "message": message,
-      "callbackPropertyChange": handleStudentPropertChange
+      "callbackPropertyChange": handleStudentPropertyChange
     });
     settings.studentViewer.render();
   }
@@ -107,7 +104,7 @@ const app = function () {
 	//--------------------------------------------------------------
 	// updating
 	//--------------------------------------------------------------
-  async function getDBData() {
+  async function getDBData(skipDisplayUpdate) {
     var dbResult = await getInfoDeckData();
 
     if (dbResult.success) {
@@ -116,14 +113,13 @@ const app = function () {
       settings.studentinfo = DataPackager.packageStudentInfo(settings.rawinfo.rosterinfo, settings.rawinfo.studentproperties);
       settings.mentorinfo = DataPackager.packageMentorInfo(settings.rawinfo.rosterinfo);
 
-      updateDisplay();
+      if (!skipDisplayUpdate) updateDisplay();
     }
     
     return dbResult;
   }
   
   function openAccessKeyDialog() {    
-    console.log('openAccessKeyDialog');
     UtilityKTS.setClass(page.accesskeyDialog, settings.hideClass, false);
     page.accesskeyInput.value = '';
     if (userSettings.accesskey) page.accesskeyInput.value = userSettings.accesskey;
@@ -215,11 +211,6 @@ const app = function () {
     window.open(settings.helpURL, '_blank');
   }
   
-  async function handleStudentPropertChange(params) {
-    console.log('handleStudentPropertChange', params);
-    return {success: true, details: 'okeydokey', data: {"xxx": "yyy"}};
-  }
-  
   //---------------------------------------
   // local storage
   //---------------------------------------
@@ -254,6 +245,62 @@ const app = function () {
     }
 
     return dbResult;
+  }
+  
+  async function handleStudentPropertyChange(params) {
+    var result = {success: false, details: 'unrecognized action', data: null};
+    
+    var queryType, dbparams;
+    
+    if (params.action == 'update-preferredname') {
+      queryType = 'infodeck-preferredname';
+      dbparams = {
+        "accesskey": userSettings.accesskey,
+        "student": params.studentdata.enrollments[0].student,
+        "preferredname": params.value
+      }        
+      
+    }  else if (params.action == 'add-note') {
+      queryType = 'infodeck-addnote';      
+      dbparams = {
+        "accesskey": userSettings.accesskey,
+        "student": params.studentdata.enrollments[0].student,
+        "notetext": params.value,
+        "datestamp": params.datestamp
+      }        
+      
+    } else if (params.action == 'update-note') {
+      queryType = 'infodeck-updatenote'; 
+      dbparams = {
+        "accesskey": userSettings.accesskey,
+        "student": params.studentdata.enrollments[0].student,
+        "noteid": params.notedata.noteid,
+        "notetext": params.value,
+        "datestamp": params.datestamp
+      }        
+      
+    } else if (params.action == 'delete-note') {
+      queryType = 'infodeck-deletenote';      
+      dbparams = {
+        "accesskey": userSettings.accesskey,
+        "student": params.studentdata.enrollments[0].student,
+        "noteid": params.notedata.noteid
+      }
+      
+    } else {
+      return result;
+    }
+    
+    result = await SQLDBInterface.doPostQuery('infodeck/query', queryType, dbparams, page.notice);
+
+    if (!result.success) {
+      message('update failed');
+      console.log('failed to update student property', result.details);
+    }
+    
+    await getDBData(true);
+
+    return result;
   }
   
 	//---------------------------------------

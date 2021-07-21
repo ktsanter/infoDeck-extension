@@ -66,9 +66,9 @@ class StudentViewer {
 
     UtilityKTS.removeChildren(this.studentDataContainer);
     
-    this.studentDataContainer.appendChild(this._displayPreferredName(studentData));
     this.studentDataContainer.appendChild(CreateElement.createDiv(null, null, studentData.enrollments[0].email));
     this.studentDataContainer.appendChild(CreateElement.createDiv(null, null, studentData.enrollments[0].affiliation));
+    this.studentDataContainer.appendChild(this._displayPreferredName(studentData));
     
     this.studentDataContainer.appendChild(this._displayEnrollments(studentData.enrollments, studentData.enddateoverride));
     this.studentDataContainer.appendChild(this._displayMentors(studentData.mentors));
@@ -181,8 +181,8 @@ class StudentViewer {
     elemLabel.appendChild(icon);
     
     for (var i = 0; i < notes.length; i++) {
-      var termContainer = CreateElement.createDiv(null, null);
-      container.appendChild(termContainer);
+      var noteContainer = CreateElement.createDiv(null, 'noterow');
+      container.appendChild(noteContainer);
       
       var elemDateStamp = CreateElement.createDiv(null, 'notecell cell-datestamp', notes[i].datestamp);
       var elemNoteText = CreateElement.createDiv(null, 'notecell cell-notetext', notes[i].notetext);
@@ -197,9 +197,9 @@ class StudentViewer {
       icon.addEventListener('click', (e) => { this._handleNoteDelete(e); });
       elemControls.appendChild(icon);
 
-      termContainer.appendChild(elemDateStamp);
-      termContainer.appendChild(elemNoteText);
-      termContainer.appendChild(elemControls);
+      noteContainer.appendChild(elemDateStamp);
+      noteContainer.appendChild(elemNoteText);
+      noteContainer .appendChild(elemControls);
     }
     
     return container;
@@ -248,14 +248,16 @@ class StudentViewer {
         "action": 'update-note',
         "studentdata": studentData,
         "notedata": noteData,
-        "value": result
+        "value": result,
+        "datestamp": this._shortDateStamp()
       });
 
     } else {
       callbackResult = await this.config.callbackPropertyChange({
         "action": 'add-note',
         "studentdata": studentData,
-        "value": result
+        "value": result,
+        "datestamp": this._shortDateStamp()
       });
     }
 
@@ -279,12 +281,32 @@ class StudentViewer {
     if (callbackResult.success) this._updateNotes(callbackResult.data);
   }
   
-  _updatePreferredName(preferredName) {
-    console.log('_updatePreferredName', preferredName);
+  _updatePreferredName(preferredNameData) {
+    var currentContainer = this.config.container.getElementsByClassName('preferred-name')[0];
+    var studentData = JSON.parse(currentContainer.getAttribute('studentdata'));
+    studentData.preferredname = preferredNameData.preferredname;
+
+    var newContainer = this._displayPreferredName(studentData);
+    currentContainer.parentNode.replaceChild(newContainer, currentContainer);
+    
+    this._updateStudentData(studentData);
   }
   
   _updateNotes(noteData) {
-    console.log('_updateNotes', noteData);
+    var currentContainer = this.config.container.getElementsByClassName('notes')[0];
+    var icon = currentContainer.getElementsByClassName('icon-addnote')[0];
+    var studentData = JSON.parse(icon.getAttribute('studentdata'));
+    studentData.notes = noteData;
+    
+    var newContainer = this._displayNotes(studentData);
+    currentContainer.parentNode.replaceChild(newContainer, currentContainer);
+    
+    this._updateStudentData(studentData);
+  }
+
+  _updateStudentData(studentData) {
+    var studentName = studentData.enrollments[0].student;
+    this.data.students[studentName] = studentData;
   }
   
   //--------------------------------------------------------------
@@ -350,8 +372,17 @@ class StudentViewer {
   _sanitizeText(str) {
     var sanitized = str;
     
-    sanitized = sanitized.replace(/[^A-Za-z\s'\.]/g, '');
+    sanitized = sanitized.replace(/[^A-Za-z0-9\s'\.]/g, '');
     
     return sanitized;
   }
+  
+  _shortDateStamp() {
+     var now = new Date();
+     var y = String(now.getFullYear()).padStart(4, '0');
+     var m = String(now.getMonth() + 1).padStart(2, '0');
+     var d = String(now.getDate()).padStart(2, '0');
+     
+     return y + '-' + m + '-' + d;
+  }  
 }
