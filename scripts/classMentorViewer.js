@@ -65,7 +65,7 @@ class MentorViewer {
       var emailsForSection = '';
     for (var m = 0; m < sortedMentors.length; m++) {
       var mentor = sortedMentors[m];
-      var row = CreateElement.createDiv(null, null);
+      var row = CreateElement.createDiv(null, 'mentor-row');
       container.appendChild(row);
       
       for (var i = 0; i < headerNames.length; i++) {

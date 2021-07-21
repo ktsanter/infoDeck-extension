@@ -307,6 +307,10 @@ body {
   cursor: pointer;
 }
 
+.content-container.mentors .section-label:hover {
+  text-decoration: underline;
+}
+
 .content-container.mentors .section-label.not-first {
   margin-top: 0.4em;
 }
@@ -314,6 +318,10 @@ body {
 .content-container.mentors .header-label {
   display: inline-block;
   font-weight: bold;
+}
+
+.content-container.mentors .mentor-row:hover {
+  background-color: var(--bgSecondary);
 }
 
 .content-container.mentors .cell-label {
@@ -327,8 +335,11 @@ body {
 
 .content-container.mentors .cell-email {
   width: 14.0em;
-  text-decoration: underline;
+}
+
+.content-container.mentors .cell-email:hover {
   cursor: pointer;
+  text-decoration: underline;
 }
 
 .content-container.mentors .cell-phone {
