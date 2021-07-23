@@ -51,6 +51,9 @@ const app = function () {
     settings.rosterManagerURL = host + '/roster-manager';
     settings.endDateManagerURL = host + '/enddate-manager/manager';
     settings.helpURL = host + '/rostermanager/extension-help';   
+    
+    var elemLogo = page.body.getElementsByClassName('navbar-logo')[0];
+    if (userSettings.uselocal) elemLogo.innerHTML += ' (local)';
   }    
 	//--------------------------------------------------------------
 	// page rendering

@@ -372,7 +372,7 @@ class StudentViewer {
   _sanitizeText(str) {
     var sanitized = str;
     
-    sanitized = sanitized.replace(/[^A-Za-z0-9\s'\.]/g, '');
+    sanitized = sanitized.replace(/[^A-Za-z0-9\s'\.\/\-]/g, '');
     
     return sanitized;
   }
