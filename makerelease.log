@@ -1,0 +1,44 @@
+time is 07/23/2021  7:42:13.17 
+The system cannot find the file specified.
+C:popup.html
+1 File(s) copied
+C:manifest.json
+1 File(s) copied
+C:LICENSE
+1 File(s) copied
+C:infodeck_logo_128.png
+C:infodeck_logo_16.png
+2 File(s) copied
+styles\fuzzyinputcontrol.css
+styles\popup.css
+2 File(s) copied
+scripts\classDataPackager.js
+scripts\classMentorViewer.js
+scripts\classStudentViewer.js
+scripts\clipboard_copy.js
+scripts\create_element.js
+scripts\fuzzyinputcontrol.js
+scripts\paramstorage.js
+scripts\popup.js
+scripts\require.js
+scripts\require_popup.js
+scripts\sqldbinterface.js
+scripts\standard_notice.js
+scripts\utilitykts.js
+13 File(s) copied
+
+7-Zip 18.01 (x64) : Copyright (c) 1999-2018 Igor Pavlov : 2018-01-28
+
+Scanning the drive:
+2 folders, 20 files, 103236 bytes (101 KiB)
+
+Creating archive: ..\infodeck_release_3.01.zip
+
+Add new data to archive: 2 folders, 20 files, 103236 bytes (101 KiB)
+
+
+Files read from disk: 20
+Archive size: 31180 bytes (31 KiB)
+Everything is Ok
+release package for "infoDeck" is complete 
+release file name: infodeck_release_3.01.zip 
