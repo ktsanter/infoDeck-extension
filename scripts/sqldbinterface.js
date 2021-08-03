@@ -107,7 +107,7 @@ class SQLDBInterface {
   static __buildApiUrl__(queryType, queryName) {
     var dbOrigin = 'https://aardvark-studios.com';
     if (__USELOCALHOST__) {
-      console.log('SQLDBInterface: using localhost');
+      //console.log('SQLDBInterface: using localhost');
       dbOrigin = 'http://localhost:8000';
     }
 

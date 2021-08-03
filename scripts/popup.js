@@ -94,7 +94,8 @@ const app = function () {
     page.mentorsContainer = page.body.getElementsByClassName('content-container mentors')[0];
     settings.mentorViewer = new MentorViewer({
       "container": page.mentorsContainer,
-      "message": message
+      "message": message,
+      "callbackPropertyChange": handleMentorPropertyChange
     });
     settings.mentorViewer.render();  
   }
@@ -116,7 +117,7 @@ const app = function () {
       await saveUserSettings();
       settings.rawinfo = dbResult.data;
       settings.studentinfo = DataPackager.packageStudentInfo(settings.rawinfo.rosterinfo, settings.rawinfo.studentproperties);
-      settings.mentorinfo = DataPackager.packageMentorInfo(settings.rawinfo.rosterinfo);
+      settings.mentorinfo = DataPackager.packageMentorInfo(settings.rawinfo.rosterinfo, settings.rawinfo.mentorproperties);
 
       if (!skipDisplayUpdate) updateDisplay();
       
@@ -236,7 +237,7 @@ const app = function () {
     ];
     
     userSettings = await ParamStorage.load(paramList);
-    
+    console.log('environment: ' + (userSettings.uselocal ? 'local' : 'prod'));
     page.notice.setNotice('');
   }
   
@@ -310,6 +311,24 @@ const app = function () {
     if (!result.success) {
       message('update failed');
       console.log('failed to update student property', result.details);
+    }
+    
+    await getDBData(true);
+
+    return result;
+  }
+  
+  async function handleMentorPropertyChange(params) {
+    var dbParams = {
+      "accesskey": userSettings.accesskey,
+      ...params
+    };
+    
+    result = await SQLDBInterface.doPostQuery('infodeck/query', 'infodeck-mentorwelcome', dbParams, page.notice);
+
+    if (!result.success) {
+      message('update failed');
+      console.log('failed to update mentor property', result.details);
     }
     
     await getDBData(true);

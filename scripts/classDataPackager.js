@@ -119,7 +119,7 @@ class DataPackager {
     };
   }
   
-  static packageMentorInfo(rosterData) {
+  static packageMentorInfo(rosterData, extraMentorInfo) {
     var mentors = {};
     var mentorsByTermAndSection = {};
 
@@ -137,6 +137,7 @@ class DataPackager {
         "affiliationphone": item.affiliationphone,
       }
       
+      var welcomeLetterSent = this._wasWelcomeLetterSent(extraMentorInfo, term, section, name);
       if (!mentorsByTermAndSection.hasOwnProperty(term)) mentorsByTermAndSection[term] = {};
       if (!mentorsByTermAndSection[term].hasOwnProperty(section)) mentorsByTermAndSection[term][section] = {};
       if (!mentorsByTermAndSection[term][section].hasOwnProperty(name)) mentorsByTermAndSection[term][section][name] = {
@@ -145,6 +146,7 @@ class DataPackager {
         "phone": item.phone,
         "affiliation": item.affiliation,
         "affiliationphone": item.affiliationphone,
+        "welcomelettersent": welcomeLetterSent
       };
     }
     
@@ -157,6 +159,19 @@ class DataPackager {
       "mentorList": mentorList.sort()
     };
   }
+  
+  static _wasWelcomeLetterSent(extraMentorInfo, term, section, name) {
+    var letterSent = false;
+
+    for (var i = 0; i < extraMentorInfo.length && !letterSent; i++) {
+      var item = extraMentorInfo[i];
+      if (item.term == term && item.section == section && item.name == name) {
+        letterSent = (item.welcomelettersent == 1);
+      }
+    }
+    
+    return letterSent;
+  }  
 
   //--------------------------------------------------------------
   // private methods

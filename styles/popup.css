@@ -308,9 +308,20 @@ body {
 }
 
 .content-container.mentors .section-label {
+  display: inline-block;
   font-weight: bold;
   cursor: pointer;
   padding-left: 0.3em;
+}
+
+.content-container.mentors .welcomefilter {
+  color: var(--bgPrimary);
+  font-size: 0.8em;
+  margin-left: 0.4em;
+}
+
+.content-container.mentors .welcomefilter.filter-off {
+  color: #aaa;
 }
 
 .content-container.mentors .section-label:hover {
@@ -353,7 +364,11 @@ body {
 }
 
 .content-container.mentors .cell-phone {
-  width: 8.0em;
+  width: 7.0em;
+}
+
+.content-container.mentors .mentor-welcomecontrol {
+  color: var(--bgPrimary);
 }
 
 /*------------------------------------------------------------------
