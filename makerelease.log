@@ -1,4 +1,4 @@
-time is 08/11/2021 11:57:02.18 
+time is 08/30/2021 13:40:08.12 
 C:popup.html
 1 File(s) copied
 C:manifest.json
@@ -29,15 +29,15 @@ scripts\utilitykts.js
 7-Zip 18.01 (x64) : Copyright (c) 1999-2018 Igor Pavlov : 2018-01-28
 
 Scanning the drive:
-2 folders, 20 files, 109031 bytes (107 KiB)
+2 folders, 20 files, 105086 bytes (103 KiB)
 
-Creating archive: ..\infodeck_release_3.03.zip
+Creating archive: ..\infodeck_release_3.04.zip
 
-Add new data to archive: 2 folders, 20 files, 109031 bytes (107 KiB)
+Add new data to archive: 2 folders, 20 files, 105086 bytes (103 KiB)
 
 
 Files read from disk: 20
-Archive size: 32417 bytes (32 KiB)
+Archive size: 31464 bytes (31 KiB)
 Everything is Ok
 release package for "infoDeck" is complete 
-release file name: infodeck_release_3.03.zip 
+release file name: infodeck_release_3.04.zip 

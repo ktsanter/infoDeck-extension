@@ -122,6 +122,7 @@ class DataPackager {
   static packageMentorInfo(rosterData, extraMentorInfo) {
     var mentors = {};
     var mentorsByTermAndSection = {};
+    var mentorsBySection = {};
 
     for (var i = 0; i < rosterData.raw_mentor_data.length; i++) {
       var item = rosterData.raw_mentor_data[i];
@@ -138,6 +139,7 @@ class DataPackager {
       }
       
       var welcomeLetterSent = this._wasWelcomeLetterSent(extraMentorInfo, term, section, name);
+      
       if (!mentorsByTermAndSection.hasOwnProperty(term)) mentorsByTermAndSection[term] = {};
       if (!mentorsByTermAndSection[term].hasOwnProperty(section)) mentorsByTermAndSection[term][section] = {};
       if (!mentorsByTermAndSection[term][section].hasOwnProperty(name)) mentorsByTermAndSection[term][section][name] = {
@@ -148,14 +150,25 @@ class DataPackager {
         "affiliationphone": item.affiliationphone,
         "welcomelettersent": welcomeLetterSent
       };
+      
+      if (!mentorsBySection.hasOwnProperty(section)) mentorsBySection[section] = {};
+      if (!mentorsBySection[section].hasOwnProperty(name)) mentorsBySection[section][name] = {
+        "name": name,
+        "email": item.email,
+        "phone": item.phone,
+        "affiliation": item.affiliation,
+        "affiliationphone": item.affiliationphone,
+        "welcomelettersent": welcomeLetterSent
+      }
     }
-    
+
     var mentorList = [];
     for (var key in mentors) mentorList.push(key);
     
     return {
       "mentors": mentors,
       "mentorsByTermAndSection": mentorsByTermAndSection,
+      "mentorsBySection": mentorsBySection,
       "mentorList": mentorList.sort()
     };
   }
@@ -165,7 +178,7 @@ class DataPackager {
 
     for (var i = 0; i < extraMentorInfo.length && !letterSent; i++) {
       var item = extraMentorInfo[i];
-      if (item.term == term && item.section == section && item.name == name) {
+      if (/*item.term == term && */item.section == section && item.name == name) {
         letterSent = (item.welcomelettersent == 1);
       }
     }

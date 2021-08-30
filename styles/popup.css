@@ -355,7 +355,7 @@ body {
 }
 
 .content-container.mentors .cell-email {
-  width: 14.0em;
+  width: 16.0em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
