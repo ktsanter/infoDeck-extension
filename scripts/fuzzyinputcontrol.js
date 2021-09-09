@@ -121,7 +121,10 @@ class FuzzyInputControl {
           elemItem.classList.add('fuzzyinputcontrol-item');
           elemItem.innerHTML = fuzzyEqual.markedEqualText;      
           
-          elemItem.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+          var itemValue = arr[i];
+          itemValue = itemValue.replace(/'/g, '&#39;');
+          elemItem.innerHTML += "<input type='hidden' value='" + itemValue + "'>";
+
           elemItem.addEventListener("click", function (me) { return function(e) {
             var targetInput = e.target.getElementsByTagName("input");
             if (targetInput.length == 0) {

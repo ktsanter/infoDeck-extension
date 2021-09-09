@@ -35,6 +35,7 @@ class DataPackager {
     for (var i = 0; i < rosterData.raw_mentor_data.length; i++) {
       var item = rosterData.raw_mentor_data[i];
       var student = item.student;
+      student = student.replace(/&#39;/g, "'");      
       if (students.hasOwnProperty(student)) {
         students[student].mentors.push(item);
       } else {
@@ -45,6 +46,7 @@ class DataPackager {
     for (var i = 0; i < rosterData.raw_guardian_data.length; i++) {
       var item = rosterData.raw_guardian_data[i];
       var student = item.student;
+      student = student.replace(/&#39;/g, "'");
       if (students.hasOwnProperty(student)) {
         students[student].guardians.push(item);
       } else {
@@ -55,6 +57,7 @@ class DataPackager {
     for (var i = 0; i < rosterData.raw_iep_data.length; i++) {
       var item = rosterData.raw_iep_data[i];
       var student = item.student;
+      student = student.replace(/&#39;/g, "'");
       if (students.hasOwnProperty(student)) {
         students[student].iep = true;
       } else {
@@ -65,6 +68,7 @@ class DataPackager {
     for (var i = 0; i < rosterData.raw_504_data.length; i++) {
       var item = rosterData.raw_504_data[i];
       var student = item.student;
+      student = student.replace(/&#39;/g, "'");
       if (students.hasOwnProperty(student)) {
         students[student]["504"] = true;
       } else {
@@ -75,6 +79,7 @@ class DataPackager {
     for (var i = 0; i < rosterData.raw_homeschooled_data.length; i++) {
       var item = rosterData.raw_homeschooled_data[i];
       var student = item.student;
+      student = student.replace(/&#39;/g, "'");
       if (students.hasOwnProperty(student)) {
         students[student].homeschooled = true;
       } else {
@@ -85,6 +90,7 @@ class DataPackager {
     for (var i = 0; i < studentProperties.preferredname.length; i++) {
       var item = studentProperties.preferredname[i];
       var student = item.studentname;
+      student = student.replace(/&#39;/g, "'");
       if (students.hasOwnProperty(student)) {
         students[student].preferredname = item.preferredname;
       }
@@ -93,6 +99,7 @@ class DataPackager {
     for (var i = 0; i < studentProperties.notes.length; i++) {
       var item = studentProperties.notes[i];
       var student = item.studentname;
+      student = student.replace(/&#39;/g, "'");
       if (students.hasOwnProperty(student)) students[student].notes.push({
         "datestamp": item.datestamp, 
         "notetext": item.notetext,
@@ -103,6 +110,7 @@ class DataPackager {
     for (var i = 0; i < studentProperties.eventoverride.length; i++) {
       var item = studentProperties.eventoverride[i];
       var student = item.student;
+      student = student.replace(/&#39;/g, "'");
       if (students.hasOwnProperty(student)) {
         students[student].enddateoverride.push(item);
       } else {

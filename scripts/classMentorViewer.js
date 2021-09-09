@@ -16,7 +16,6 @@ class MentorViewer {
   render() {}
   
   update(mentorData) {
-    console.log('MentorViewer.update', mentorData);
     this.data = mentorData;
     
     UtilityKTS.removeChildren(this.config.container);
