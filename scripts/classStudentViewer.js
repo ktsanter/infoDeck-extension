@@ -69,6 +69,7 @@ class StudentViewer {
     this.studentDataContainer.appendChild(CreateElement.createDiv(null, null, studentData.enrollments[0].email));
     this.studentDataContainer.appendChild(CreateElement.createDiv(null, null, studentData.enrollments[0].affiliation));
     this.studentDataContainer.appendChild(this._displayPreferredName(studentData));
+    this.studentDataContainer.appendChild(this._displayPronouns(studentData));
     
     this.studentDataContainer.appendChild(this._displayEnrollments(studentData.enrollments, studentData.enddateoverride));
     this.studentDataContainer.appendChild(this._displayMentors(studentData.mentors));
@@ -89,6 +90,23 @@ class StudentViewer {
     container.title = 'edit preferred name';
     container.setAttribute("studentdata", JSON.stringify(studentData));
     container.addEventListener('click', (e) => { this._handlePreferredNameEdit(e); });
+    
+    return container;
+  }
+  
+  _displayPronouns(studentData) {
+    var container = CreateElement.createDiv(null, 'pronouns');
+
+    if (studentData.pronouns.length == 0) {
+      container.innerHTML = 'not specified';
+      container.classList.add('no-preferredname');
+    } else {
+      container.innerHTML = studentData.pronouns;
+    }
+
+    container.title = 'edit pronouns';
+    container.setAttribute("studentdata", JSON.stringify(studentData));
+    container.addEventListener('click', (e) => { this._handlePronounsEdit(e); });
     
     return container;
   }
@@ -222,7 +240,7 @@ class StudentViewer {
 
     var msg = 'Please enter the preferred name for the student';
     var result = prompt(msg, currentValue);
-    if (!result || result == currentValue || result.length == 0) return;
+    if (result == null || result == currentValue) return;
     result = this._sanitizeText(result);
          
     var callbackResult = await this.config.callbackPropertyChange({
@@ -232,6 +250,23 @@ class StudentViewer {
     });
 
     if (callbackResult.success) this._updatePreferredName(callbackResult.data);
+  }
+    
+  async _editPronouns(studentData) {
+    var currentValue = studentData.pronouns;
+
+    var msg = 'Please enter the preferred name for the student';
+    var result = prompt(msg, currentValue);
+    if (result == null || result == currentValue) return;
+    result = this._sanitizeText(result);
+         
+    var callbackResult = await this.config.callbackPropertyChange({
+      "action": 'update-pronouns',
+      "studentdata": studentData,
+      "value": result
+    });
+
+    if (callbackResult.success) this._updatePronouns(callbackResult.data);
   }
     
   async _editNote(studentData, noteData) {
@@ -292,6 +327,17 @@ class StudentViewer {
     this._updateStudentData(studentData);
   }
   
+  _updatePronouns(pronounsData) {
+    var currentContainer = this.config.container.getElementsByClassName('pronouns')[0];
+    var studentData = JSON.parse(currentContainer.getAttribute('studentdata'));
+    studentData.pronouns = pronounsData.pronouns;    
+
+    var newContainer = this._displayPronouns(studentData);
+    currentContainer.parentNode.replaceChild(newContainer, currentContainer);
+    
+    this._updateStudentData(studentData);
+  }
+  
   _updateNotes(noteData) {
     var currentContainer = this.config.container.getElementsByClassName('notes')[0];
     var icon = currentContainer.getElementsByClassName('icon-addnote')[0];
@@ -318,6 +364,10 @@ class StudentViewer {
   
   async _handlePreferredNameEdit(e) {
     await this._editPreferredName(JSON.parse(e.target.getAttribute("studentdata")));
+  }
+  
+  async _handlePronounsEdit(e) {
+    await this._editPronouns(JSON.parse(e.target.getAttribute("studentdata")));
   }
   
   async _handleNoteAdd(e) {

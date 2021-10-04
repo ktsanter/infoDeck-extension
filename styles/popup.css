@@ -180,15 +180,18 @@ body {
   padding: 0 0.4em;
 }
 
-.content-container.students .student-data-container .preferred-name:hover {
+.content-container.students .student-data-container .preferred-name:hover,
+.content-container.students .student-data-container .pronouns:hover {
   text-decoration: underline;
 }
 
-.content-container.students .student-data-container .preferred-name {
+.content-container.students .student-data-container .preferred-name,
+.content-container.students .student-data-container .pronouns {
   cursor: pointer;
 }
 
-.content-container.students .student-data-container .preferred-name.no-preferredname {
+.content-container.students .student-data-container .preferred-name.no-preferredname,
+.content-container.students .student-data-container .pronouns.no-preferredname {
   font-style: italic;  
 }
 

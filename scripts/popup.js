@@ -275,6 +275,14 @@ const app = function () {
         "preferredname": params.value
       }        
       
+    }  else if (params.action == 'update-pronouns') {
+      queryType = 'infodeck-pronouns';      
+      dbparams = {
+        "accesskey": userSettings.accesskey,
+        "student": params.studentdata.enrollments[0].student,
+        "pronouns": params.value
+      }        
+      
     }  else if (params.action == 'add-note') {
       queryType = 'infodeck-addnote';      
       dbparams = {
