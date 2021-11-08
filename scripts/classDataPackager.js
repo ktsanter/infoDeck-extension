@@ -12,6 +12,7 @@ class DataPackager {
   // public methods
   //--------------------------------------------------------------   
   static packageStudentInfo(rosterData, studentProperties) {
+    console.log('DataPackager.packageStudentInfo');
     var students = {};
     
     for (var i = 0; i < rosterData.raw_enrollment_data.length; i++) {
@@ -21,6 +22,7 @@ class DataPackager {
         students[student] = {
         "enrollments": [], 
         "mentors": [], 
+        "hascoach": false,
         "guardians": [],
         "iep": false,
         "504": false,
@@ -39,6 +41,10 @@ class DataPackager {
       student = student.replace(/&#39;/g, "'");      
       if (students.hasOwnProperty(student)) {
         students[student].mentors.push(item);
+        if (item.name.includes('Coach')) {
+          students[student].hascoach = true;
+        }
+        
       } else {
         console.log('mentor for unknown student', item);
       }

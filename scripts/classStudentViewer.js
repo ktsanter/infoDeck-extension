@@ -25,10 +25,12 @@ class StudentViewer {
     this.iconIEP = CreateElement.createImage(null, 'icon icon-image icon-iep hide-me', 'https://res.cloudinary.com/ktsanter/image/upload/v1625677834/Roster%20Manager/iep_standardized.png', 'student has IEP' );
     this.icon504 = CreateElement.createImage(null, 'icon icon-image icon-iep hide-me', 'https://res.cloudinary.com/ktsanter/image/upload/v1625677834/Roster%20Manager/504_standardized.png', 'student has 504' );
     this.iconHomeSchooled = CreateElement.createIcon(null, 'icon icon-homeschooled fas fa-home hide-me', 'student is homeschooled');
+    this.iconCoach = CreateElement.createImage(null, 'icon icon-image icon-coach hide-me', 'https://res.cloudinary.com/ktsanter/image/upload/v1636133393/Roster%20Manager/coach3.png', 'student has coach' );
     
     iconContainer.appendChild(this.iconIEP);
     iconContainer.appendChild(this.icon504);
     iconContainer.appendChild(this.iconHomeSchooled);
+    iconContainer.appendChild(this.iconCoach);
   }
   
   update(studentData) {
@@ -59,10 +61,12 @@ class StudentViewer {
   
   _displayStudentInfo(studentName) {
     var studentData = this.data.students[studentName];
+    console.log('StudentViewer._displayStudentInfo', studentData);
 
     UtilityKTS.setClass(this.iconIEP, 'hide-me', !studentData.iep);
     UtilityKTS.setClass(this.icon504, 'hide-me', !studentData["504"]);
     UtilityKTS.setClass(this.iconHomeSchooled , 'hide-me', !studentData.homeschooled);
+    UtilityKTS.setClass(this.iconCoach, 'hide-me', !studentData.hascoach);
 
     UtilityKTS.removeChildren(this.studentDataContainer);
     
